@@ -196,7 +196,19 @@ param (
     [Parameter(
         Mandatory = $false,
         HelpMessage = 'Run As Background Job')]
-    [switch]$asJob = $false
+    [switch]$asJob = $false,
+    
+    # PoSH Server Path    
+    [Parameter(
+        Mandatory = $false,
+        HelpMessage = 'PoSH Server Path. Default: C:\Program Files\PoSHServer')]
+    [string]$PoSHServerPath = "C:\Program Files\PoSHServer",    
+
+    # PoSH Server Module Path  
+    [Parameter(
+        Mandatory = $false,
+        HelpMessage = 'PoSH Server Module Path. Default: C:\Program Files\PoSHServer\modules\PoSHServer')]
+    [string]$PoSHModulePath = "C:\Program Files\PoSHServer\modules\PoSHServer"
 )
 	
 	# Enable Debug Mode
@@ -209,12 +221,6 @@ param (
 		$ErrorActionPreference = "silentlycontinue"
 	}
 
-	# Get PoSH Server Path
-	$PoSHServerPath = "C:\Program Files\PoSHServer"
-	
-	# Get PoSH Server Module Path
-	$PoSHModulePath = "C:\Program Files\PoSHServer\modules\PoSHServer"
-	
 	# Test PoSH Server Module Path
 	$PoSHModulePathTest = Test-Path $PoSHModulePath
 	
@@ -493,8 +499,10 @@ param (
 				
 				while ($true)
 				{
-					Start-Sleep -s 60								
-					# Get Job Time					$JobTime = Get-Date -format HHmm
+					Start-Sleep -s 60			
+					
+					# Get Job Time
+					$JobTime = Get-Date -format HHmm
 					
 					if ($CustomJobSchedule -eq "1")
 					{
@@ -506,7 +514,14 @@ param (
 					}					
 					elseif ($CustomJobSchedule -eq "5")
 					{
-						# PoSH Server Custom Jobs (at every 5 minutes)						if ($JobTime -like "*5" -or $JobTime -like "*0")						{							if ($CustomJob)							{								. $CustomJob							}						}
+						# PoSH Server Custom Jobs (at every 5 minutes)
+						if ($JobTime -like "*5" -or $JobTime -like "*0")
+						{
+							if ($CustomJob)
+							{
+								. $CustomJob
+							}
+						}
 					}
 					elseif ($CustomJobSchedule -eq "10")
 					{
@@ -564,7 +579,13 @@ param (
 						}
 					}
 				}
-			} -ArgumentList $PoSHCustomJobArgs						# PoSH Server Custom Config			if ($CustomConfig)			{				. $CustomConfig			}
+			} -ArgumentList $PoSHCustomJobArgs
+			
+			# PoSH Server Custom Config
+			if ($CustomConfig)
+			{
+				. $CustomConfig
+			}
 			
 			# Create an HTTPListener
 			try
